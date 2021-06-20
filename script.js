@@ -8,7 +8,7 @@ Math.radToDeg = 180 / Math.PI;
 var canvas = document.getElementsByTagName('canvas')[0];
 var ctx = canvas.getContext('2d');
 
-function resize() {
+canvas.resize = () => {
     var dpr = window.devicePixelRatio;
     var parent = canvas.parentElement;
     canvas.width = parent.offsetWidth * dpr;
@@ -16,9 +16,9 @@ function resize() {
     ctx.scale(dpr, dpr);
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-}
+};
 
-resize();
+canvas.resize();
 
 var lines = [
     new Lineseg(new Point(400,400), new Point(200,400)),
