@@ -55,11 +55,16 @@ var objects = [
     [new Point(920,500), new Point(930, 500)],
     [new Point(940,500), new Point(950, 500)],
     [new Point(960,500), new Point(970, 500)],
+    [new Point()]
 ]
 
-window.onmousemove = (event) => {
+var mousePos = new Point();
 
-    var mousePos = new Point(event.x, event.y)
+window.onmousemove = (event) => {
+    mousePos = new Point(event.x, event.y)
+}
+
+function draw() {
     ctx.clearRect(0,0,window.innerWidth, window.innerHeight);
 
     // draw objects
@@ -143,31 +148,42 @@ window.onmousemove = (event) => {
     })
   
     // fill in lightShape
+    ctx.strokeStyle = 'rgb(100,100,100)';
+    ctx.fillStyle = 'rgb(100,100,100)';
+    ctx.fillStyle = 'yellow';
+    ctx.strokeStyle = 'yellow'
     for (var i = 0; i < lightShape.length; i++) {
         var indexOfNextPoint = i + 1;
         if (indexOfNextPoint == lightShape.length) indexOfNextPoint = 0;
         // ctx.fillStyle = `rgb(${i * 4},${i * 4},${i * 4})`
         ctx.beginPath();
-        ctx.strokeStyle = 'rgb(100,100,100)';
-        ctx.fillStyle = 'rgb(100,100,100)';
         ctx.lineTo(lightShape[i].x, lightShape[i].y)
         ctx.lineTo(lightShape[indexOfNextPoint].x, lightShape[indexOfNextPoint].y)
         ctx.lineTo(mousePos.x, mousePos.y)
-        // ctx.stroke();
-        // ctx.fill()
+        ctx.stroke();
+        ctx.fill()
 
 
     }
     
     // color walls
     ctx.beginPath();
+    ctx.lineTo(lightShape[0].x, lightShape[0].y)
     for (var i = 0; i < lightShape.length; i++) {
         var indexOfNextPoint = i + 1;
         if (indexOfNextPoint == lightShape.length) indexOfNextPoint = 0;
-        ctx.lineTo(lightShape[i].x, lightShape[i].y)
+
+        // don't draw outline if it's not a wall
+        var point = lightShape[i].sub(mousePos);
+        var point2 = lightShape[indexOfNextPoint].sub(mousePos);
+        if (Math.abs(Math.atan2(point.y, point.x) - Math.atan2(point2.y, point2.x)) <= .00005) {
+            ctx.moveTo(lightShape[indexOfNextPoint].x, lightShape[indexOfNextPoint].y);
+            continue;
+        }
+
         ctx.lineTo(lightShape[indexOfNextPoint].x, lightShape[indexOfNextPoint].y)
     }
-    ctx.strokeStyle = 'gray';
+    ctx.strokeStyle = 'red';
     ctx.lineWidth = 5
     ctx.stroke();
     ctx.lineWidth = 1
@@ -180,5 +196,6 @@ window.onmousemove = (event) => {
     //     ctx.fillText(i,lightShape[i].x,lightShape[i].y);
     //     ctx.stroke();
     // }
-
+    requestAnimationFrame(draw);
 }
+draw();
